@@ -1,2 +1,23 @@
 #!/bin/sh
-npx turbo run lint && npm run format
+
+# Зберігаємо список файлів, які були доданих до коміту
+files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(js|jsx|ts|tsx|json|css|md)$')
+
+# Якщо немає релевантних файлів, виходимо
+if [ -z "$files" ]; then
+    exit 0
+fi
+
+# Форматуємо файли з prettier
+echo "Форматування файлів перед комітом..."
+npm run format
+
+# Додаємо відформатовані файли знову до індексу
+echo "Додаємо відформатовані файли до коміту..."
+echo "$files" | xargs git add
+
+# Запускаємо лінтер
+echo "Запуск лінтеру..."
+npx turbo run lint || exit 1
+
+exit 0
