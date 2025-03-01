@@ -14,7 +14,7 @@ export const getGlobalStyles = () => {
         font-style: ${font.fontStyle};
         font-display: ${font.fontDisplay};
       }
-    `
+    `,
       )
       .join("\n")}
     

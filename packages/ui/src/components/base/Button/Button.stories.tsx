@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 import {Button} from "./Button";
 
 const meta = {
-  title: "UI/Button",
+  title: "Base/Button",
   component: Button,
   parameters: {
     layout: "centered",
@@ -22,6 +22,7 @@ type Story = StoryObj<typeof Button>;
  */
 export const Primary: Story = {
   args: {
+    rounded: true,
     variant: "contained",
     color: "primary",
     children: "Button",
@@ -33,6 +34,7 @@ export const Primary: Story = {
  */
 export const Secondary: Story = {
   args: {
+    rounded: true,
     variant: "contained",
     color: "secondary",
     children: "Button",
@@ -44,6 +46,7 @@ export const Secondary: Story = {
  */
 export const Outlined: Story = {
   args: {
+    rounded: true,
     variant: "outlined",
     color: "primary",
     children: "Button",
@@ -55,6 +58,7 @@ export const Outlined: Story = {
  */
 export const Text: Story = {
   args: {
+    rounded: true,
     variant: "text",
     color: "primary",
     children: "Button",
@@ -66,6 +70,7 @@ export const Text: Story = {
  */
 export const Large: Story = {
   args: {
+    rounded: true,
     size: "large",
     children: "Button",
   },
@@ -76,6 +81,7 @@ export const Large: Story = {
  */
 export const Small: Story = {
   args: {
+    rounded: true,
     size: "small",
     children: "Button",
   },
@@ -86,6 +92,7 @@ export const Small: Story = {
  */
 export const Disabled: Story = {
   args: {
+    rounded: true,
     disabled: true,
     children: "Button",
   },
