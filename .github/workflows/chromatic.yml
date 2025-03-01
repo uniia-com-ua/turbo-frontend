@@ -1,0 +1,43 @@
+name: 'Chromatic UI'
+
+on:
+  push:
+    paths:
+      - 'packages/ui/src/**'
+    branches:
+      - packages/ui
+
+jobs:
+  chromatic-deployment:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/ui
+    
+    steps:
+      # Перевіряємо код
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Storybook
+        run: npm run build-storybook
+      
+      # Запуск Chromatic
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          workingDir: packages/ui
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: storybook-static
