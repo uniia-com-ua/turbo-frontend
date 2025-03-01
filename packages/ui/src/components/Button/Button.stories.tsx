@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './Button';
+import type {Meta, StoryObj} from "@storybook/react";
+import {Button} from "./Button";
 
 const meta = {
-  title: 'UI/Button',
+  title: "UI/Button",
   component: Button,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     design: {
-      type: 'figspec',
-      url: 'https://www.figma.com/design/VEafRJoDYtEnT09ZGlG3xM/Uniia-Design-System?node-id=264-804&t=pVcwE4LNq3BWgBp5-4',
+      type: "figspec",
+      url: "https://www.figma.com/design/VEafRJoDYtEnT09ZGlG3xM/Uniia-Design-System?node-id=264-804&t=pVcwE4LNq3BWgBp5-4",
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 } satisfies Meta<typeof Button>;
 
 export default meta;
@@ -22,9 +22,9 @@ type Story = StoryObj<typeof Button>;
  */
 export const Primary: Story = {
   args: {
-    variant: 'contained',
-    color: 'primary',
-    children: 'Button',
+    variant: "contained",
+    color: "primary",
+    children: "Button",
   },
 };
 
@@ -33,9 +33,9 @@ export const Primary: Story = {
  */
 export const Secondary: Story = {
   args: {
-    variant: 'contained',
-    color: 'secondary',
-    children: 'Button',
+    variant: "contained",
+    color: "secondary",
+    children: "Button",
   },
 };
 
@@ -44,9 +44,9 @@ export const Secondary: Story = {
  */
 export const Outlined: Story = {
   args: {
-    variant: 'outlined',
-    color: 'primary',
-    children: 'Button',
+    variant: "outlined",
+    color: "primary",
+    children: "Button",
   },
 };
 
@@ -55,9 +55,9 @@ export const Outlined: Story = {
  */
 export const Text: Story = {
   args: {
-    variant: 'text',
-    color: 'primary',
-    children: 'Button',
+    variant: "text",
+    color: "primary",
+    children: "Button",
   },
 };
 
@@ -66,8 +66,8 @@ export const Text: Story = {
  */
 export const Large: Story = {
   args: {
-    size: 'large',
-    children: 'Button',
+    size: "large",
+    children: "Button",
   },
 };
 
@@ -76,8 +76,8 @@ export const Large: Story = {
  */
 export const Small: Story = {
   args: {
-    size: 'small',
-    children: 'Button',
+    size: "small",
+    children: "Button",
   },
 };
 
@@ -87,6 +87,6 @@ export const Small: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
-    children: 'Button',
+    children: "Button",
   },
-}; 
+};

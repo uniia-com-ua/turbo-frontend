@@ -1,4 +1,4 @@
-import type { StorybookConfig } from "@storybook/react-vite";
+import type {StorybookConfig} from "@storybook/react-vite";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -22,7 +22,7 @@ const config: StorybookConfig = {
     autodocs: true,
   },
 
-  staticDirs: ['../src'],
+  staticDirs: ["../src"],
 
   typescript: {
     reactDocgen: "react-docgen-typescript",
@@ -33,12 +33,10 @@ const config: StorybookConfig = {
       },
       shouldExtractLiteralValuesFromEnum: true,
       shouldRemoveUndefinedFromOptional: true,
-      propFilter: (prop) =>
-        prop.parent
-          ? !/node_modules\/(?!@mui)/.test(prop.parent.fileName)
-          : true,
-    }
-  }
+      propFilter: prop =>
+        prop.parent ? !/node_modules\/(?!@mui)/.test(prop.parent.fileName) : true,
+    },
+  },
 };
 
 export default config;

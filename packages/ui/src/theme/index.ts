@@ -1,13 +1,13 @@
-import { createTheme } from '@mui/material/styles';
-import { paletteLight, paletteDark } from './palette';
-import { typography } from './typography';
-import { buttonComponents, paperComponents } from './components/index';
-import { breakpoints, zIndex } from './tokens';
+import {createTheme} from "@mui/material/styles";
+import {paletteLight, paletteDark} from "./palette";
+import {typography} from "./typography";
+import {buttonComponents, paperComponents} from "./components/index";
+import {breakpoints, zIndex} from "./tokens";
 
 export const lightTheme = createTheme({
   typography,
   palette: {
-    mode: 'light',
+    mode: "light",
     ...paletteLight,
   },
   components: {
@@ -30,11 +30,10 @@ export const lightTheme = createTheme({
   zIndex,
 });
 
-
 export const darkTheme = createTheme({
   typography,
   palette: {
-    mode: 'dark',
+    mode: "dark",
     ...paletteDark,
   },
   components: {

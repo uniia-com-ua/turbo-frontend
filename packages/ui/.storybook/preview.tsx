@@ -1,23 +1,23 @@
-import React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { darkTheme, lightTheme } from '../src/theme';
-import { getGlobalStyles } from '../src/theme/globalStyles';
-import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import createCache from '@emotion/cache';
-import type { Preview } from '@storybook/react';
-import { CacheProvider } from '@emotion/react';
+import React from "react";
+import {ThemeProvider} from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import {darkTheme, lightTheme} from "../src/theme";
+import {getGlobalStyles} from "../src/theme/globalStyles";
+import {withThemeFromJSXProvider} from "@storybook/addon-themes";
+import createCache from "@emotion/cache";
+import type {Preview} from "@storybook/react";
+import {CacheProvider} from "@emotion/react";
 
 // Створення емоційного кешу для MUI
 const cache = createCache({
-  key: 'mui',
+  key: "mui",
   prepend: true,
 });
 
 const globalStyles = getGlobalStyles();
 
 export const decorators = [
-  (Story) => (
+  Story => (
     <CacheProvider value={cache}>
       <style>{globalStyles}</style>
       <Story />
@@ -28,7 +28,7 @@ export const decorators = [
       light: lightTheme,
       dark: darkTheme,
     },
-    defaultTheme: 'light',
+    defaultTheme: "light",
     Provider: ThemeProvider,
     GlobalStyles: CssBaseline,
   }),
@@ -36,7 +36,7 @@ export const decorators = [
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: {argTypesRegex: "^on[A-Z].*"},
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -45,13 +45,13 @@ const preview: Preview = {
       expanded: true, // розгорнуті контроли за замовчуванням
     },
     docs: {
-      story: { inline: true },
+      story: {inline: true},
     },
     backgrounds: {
-      default: 'light',
+      default: "light",
       values: [
-        { name: 'light', value: '#FFFFFF' },
-        { name: 'dark', value: '#121212' },
+        {name: "light", value: "#FFFFFF"},
+        {name: "dark", value: "#121212"},
       ],
     },
   },

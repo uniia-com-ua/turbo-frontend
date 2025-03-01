@@ -3,4 +3,4 @@ export const zIndex = {
   snackbar: 1400,
   tooltip: 1500,
   drawer: 1200,
-} as const; 
+} as const;

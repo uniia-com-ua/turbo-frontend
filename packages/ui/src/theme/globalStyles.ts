@@ -1,10 +1,12 @@
-import { generateFontFaces } from './typography';
+import {generateFontFaces} from "./typography";
 
 export const getGlobalStyles = () => {
   const fontFaces = generateFontFaces();
-  
+
   return `
-    ${fontFaces.map(font => `
+    ${fontFaces
+      .map(
+        font => `
       @font-face {
         font-family: ${font.fontFamily};
         src: ${font.src};
@@ -12,10 +14,12 @@ export const getGlobalStyles = () => {
         font-style: ${font.fontStyle};
         font-display: ${font.fontDisplay};
       }
-    `).join('\n')}
+    `
+      )
+      .join("\n")}
     
     :root {
       --font-e-ukraine: '${fontFaces[0]?.fontFamily}', Tahoma, Arial;
     }
   `;
-}; 
+};

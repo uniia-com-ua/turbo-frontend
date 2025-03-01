@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import "./globals.css";
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { eUkraine } from "./fonts";
-import { ThemeRegistry } from "./providers/ThemeRegistry";
+import {AppRouterCacheProvider} from "@mui/material-nextjs/v15-appRouter";
+import {eUkraine} from "./fonts";
+import {ThemeRegistry} from "./providers/ThemeRegistry";
 
 export const metadata: Metadata = {
   title: "Унія",
@@ -17,10 +17,8 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${eUkraine.className}`}>
-        <AppRouterCacheProvider options={{ key: 'css' }}>
-          <ThemeRegistry>
-            {children}
-          </ThemeRegistry>
+        <AppRouterCacheProvider options={{key: "css"}}>
+          <ThemeRegistry>{children}</ThemeRegistry>
         </AppRouterCacheProvider>
       </body>
     </html>
