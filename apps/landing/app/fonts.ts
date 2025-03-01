@@ -36,6 +36,7 @@ export const eUkraine = localFont({
   display: 'swap',
   fallback: ['Tahoma'],
   variable: '--font-e-ukraine',
+  preload: true,
 });
 
 // Експортуємо загальний об'єкт шрифтів

@@ -13,5 +13,5 @@ export const generateFontFaces = () => {
 
 // Базова конфігурація типографіки для Material UI
 export const typography = {
-  fontFamily: `var(--font-e-ukraine), e-Ukraine, ${fontFamilyFallback.join(', ')}`,
+  fontFamily: `var(--font-e-ukraine), ${fontFamilyFallback.join(', ')}`,
 };

@@ -13,5 +13,9 @@ export const getGlobalStyles = () => {
         font-display: ${font.fontDisplay};
       }
     `).join('\n')}
+    
+    :root {
+      --font-e-ukraine: '${fontFaces[0]?.fontFamily}', Tahoma, Arial;
+    }
   `;
 }; 
