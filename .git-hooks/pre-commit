@@ -1,0 +1,2 @@
+#!/bin/sh
+npx turbo run lint && npm run format
