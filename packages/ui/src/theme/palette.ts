@@ -13,6 +13,9 @@ export const paletteLight = {
     primary: "#000000",
     secondary: "#666666",
   },
+  background: {
+    default: "#ffffff",
+  },
 };
 
 export const paletteDark = {

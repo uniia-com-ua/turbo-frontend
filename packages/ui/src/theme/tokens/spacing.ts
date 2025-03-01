@@ -6,4 +6,10 @@ export const spacing = {
   lg: "24px",
   xl: "32px",
   xxl: "48px",
+  space_x1: "4px",
+  space_x2: "8px",
+  space_x3: "12px",
+  space_x4: "16px",
+  space_x5: "20px",
+  space_x6: "24px",
 } as const;
