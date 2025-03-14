@@ -14,28 +14,31 @@ RUN npm install -g turbo
 # Важливо: цей Dockerfile треба запускати з кореня монорепозиторію: 
 # docker build -f apps/landing/Dockerfile .
 COPY . .
+RUN npx turbo prune uniia-landing --docker
 
-# Оптимізована стратегія для монорепозиторію: виконуємо prune, потім встановлюємо залежності
-RUN npx turbo prune --scope=uniia-landing --docker
-
-# Створюємо новий етап для встановлення та збірки
+# Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apk update
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Копіюємо package.json файли для всіх залежностей
+# First install the dependencies (as they change less often)
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
-
-# Встановлюємо всі залежності 
 RUN npm ci
 
-# Копіюємо вихідний код всіх пакетів
+# Build the project
 COPY --from=builder /app/out/full/ .
 
-# Запускаємо збірку
-RUN cd apps/landing && npm run build
+# Uncomment and use build args to enable remote caching
+# ARG TURBO_TEAM
+# ENV TURBO_TEAM=$TURBO_TEAM
+
+# ARG TURBO_TOKEN
+# ENV TURBO_TOKEN=$TURBO_TOKEN
+
+# Компіляція TypeScript і збірка проекту
+RUN npm run build --workspace=uniia-landing
 
 FROM base AS runner
 WORKDIR /app
@@ -48,7 +51,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-# Копіюємо необхідні файли для запуску
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/.next/static ./apps/landing/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/public ./apps/landing/public

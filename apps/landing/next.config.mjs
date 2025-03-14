@@ -10,7 +10,6 @@ const __dirname = dirname(__filename);
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  serverExternalPackages: ["@uniia/ui"],
   experimental: {
     outputFileTracingRoot: path.join(__dirname, "../../"),
   }
