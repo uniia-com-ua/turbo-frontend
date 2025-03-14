@@ -1,4 +1,5 @@
 import {Components} from "@mui/material/styles";
+import {spacing} from "../tokens/spacing";
 
 export const buttonComponents: Components = {
   MuiButton: {
@@ -8,7 +9,7 @@ export const buttonComponents: Components = {
     styleOverrides: {
       root: {
         textTransform: "none",
-        padding: "8px 20px",
+        padding: "8px 24px",
         fontWeight: 400,
         boxShadow: "none",
         lineHeight: "18px",
@@ -18,13 +19,13 @@ export const buttonComponents: Components = {
         },
       },
       sizeSmall: {
-        padding: "4px 16px",
+        padding: `${spacing.space_x1} ${spacing.space_x3}`,
       },
       sizeMedium: {
-        padding: "8px 20px",
+        padding: `${spacing.space_x2} ${spacing.space_x5}`,
       },
       sizeLarge: {
-        padding: "12px 24px",
+        padding: `${spacing.space_x3} ${spacing.space_x6}`,
       },
     },
   },
