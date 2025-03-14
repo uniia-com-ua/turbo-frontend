@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: uniia.com.ua
+  - host: test.uniia.com.ua
     http:
       paths:
       - path: /
@@ -19,5 +19,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - uniia.com.ua
-    secretName: uniia-tls-cert 
+    - test.uniia.com.ua
+    secretName: uniia-test-tls-cert 

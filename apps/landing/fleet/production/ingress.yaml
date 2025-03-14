@@ -2,9 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: uniia-landing
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  ingressClassName: nginx
   rules:
-  - host: test.uniia.com.ua
+  - host: app.uniia.io
     http:
       paths:
       - path: /
@@ -16,5 +19,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - test.uniia.com.ua
-    secretName: uniia-test-tls-cert 
+    - app.uniia.io
+    secretName: uniia-prod-tls-cert 

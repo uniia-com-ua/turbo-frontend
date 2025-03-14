@@ -6,19 +6,18 @@
 
 ```
 fleet/
-├── fleet.yaml                # Головний конфігураційний файл для Fleet
-├── resources/                # Базові Kubernetes ресурси
-│   ├── deployment.yaml       # Базовий деплоймент
-│   ├── service.yaml          # Сервіс
-│   ├── ingress.yaml          # Ingress
-│   └── kustomization.yaml    # Kustomize конфігурація для базових ресурсів
-├── production/               # Конфігурація для продакшн-середовища
-│   ├── kustomization.yaml    # Kustomize конфігурація для продакшн
-│   └── patch-deployment.yaml # Патч для продакшн деплойменту
-└── test/                     # Конфігурація для тестового середовища
-    ├── kustomization.yaml    # Kustomize конфігурація для тестового середовища
-    ├── patch-deployment.yaml # Патч для тестового деплойменту
-    └── patch-ingress.yaml    # Патч для інгресу тестового середовища
+├── production/                     # Конфігурація для продакшн-середовища
+│   ├── fleet.yaml                  # Fleet конфігурація для продакшн-середовища
+│   ├── deployment.yaml             # Деплоймент для продакшн
+│   ├── service.yaml                # Сервіс для продакшн
+│   ├── ingress.yaml                # Інгрес для продакшн
+│   └── kustomization.yaml          # Kustomize конфігурація для продакшн
+└── test/                           # Конфігурація для тестового середовища
+    ├── fleet.yaml                  # Fleet конфігурація для тестового середовища
+    ├── deployment.yaml             # Деплоймент для тесту
+    ├── service.yaml                # Сервіс для тесту
+    ├── ingress.yaml                # Інгрес для тесту
+    └── kustomization.yaml          # Kustomize конфігурація для тестового середовища
 ```
 
 ## Розгортання
@@ -27,7 +26,7 @@ fleet/
 
 1. Версії з позначкою `-rc` або pre-release в тестове середовище (`web-landing-test`):
 
-   - Використовується домен `test.app.uniia.io`
+   - Використовується домен `test.uniia.com.ua`
    - Використовується тег образу `latest-rc`
    - Менша кількість реплік (1) та обмежені ресурси
 
@@ -50,12 +49,18 @@ fleet/
 
 ## Налаштування в Rancher
 
-1. Зареєструйте цей Git-репозиторій в Rancher Fleet:
+1. Зареєструйте Git-репозиторій в Rancher Fleet для кожного середовища:
 
    - Відкрийте Rancher Dashboard -> Continuous Delivery -> Git Repos
    - Натисніть "Add Repository"
-   - Введіть ім'я репозиторію та URL
-   - Вкажіть шлях до директорії Fleet: `apps/landing/fleet`
+   - Для продакшн-середовища:
+     - Ім'я: `uniia-landing-production`
+     - URL: `https://github.com/uniia-com-ua/turbo-frontend`
+     - Шлях: `apps/landing/fleet/production`
+   - Для тестового середовища:
+     - Ім'я: `uniia-landing-test`
+     - URL: `https://github.com/uniia-com-ua/turbo-frontend`
+     - Шлях: `apps/landing/fleet/test`
 
 2. Створіть необхідні namespace в кластері:
    - `web-landing-prod`
@@ -63,6 +68,8 @@ fleet/
 
 ## Особливості роботи
 
+- Кожне середовище є повністю самодостатнім, з власними ресурсами та конфігурацією
+- Кожне середовище має власну Fleet конфігурацію, що дозволяє незалежне розгортання
 - Fleet автоматично слідкує за змінами в конфігурації в Git-репозиторії
 - Кожен реліз автоматично розгортається у відповідне середовище
 - При необхідності можна вручну керувати процесом злиття PR з оновленнями Fleet конфігурації
