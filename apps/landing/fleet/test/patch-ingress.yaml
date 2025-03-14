@@ -4,7 +4,7 @@ metadata:
   name: uniia-landing
 spec:
   rules:
-  - host: test.app.uniia.io
+  - host: test.uniia.com.ua
     http:
       paths:
       - path: /
@@ -16,5 +16,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - test.app.uniia.io
+    - test.uniia.com.ua
     secretName: uniia-test-tls-cert 

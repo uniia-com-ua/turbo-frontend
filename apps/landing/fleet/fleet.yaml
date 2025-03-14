@@ -5,7 +5,7 @@ metadata:
   namespace: fleet-default
 spec:
   # Репозиторій, який буде відслідковуватись Fleet
-  repo: https://github.com/YOUR_ORG/turbo-frontend
+  repo: https://github.com/uniia-com-ua/turbo-frontend
   # Гілка, яку буде відслідковувати Fleet
   branch: main
   # Шлях до директорії з Fleet конфігурацією в репозиторії

@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: uniia-landing
-        image: ghcr.io/YOUR_ORG/uniia-landing:latest
+        image: ghcr.io/uniia-com-ua/uniia-landing:latest
         ports:
         - containerPort: 3000
         readinessProbe:
