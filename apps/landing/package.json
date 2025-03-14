@@ -18,16 +18,16 @@
     "@mui/material-nextjs": "^6.4.3",
     "@mui/system": "^6.4.3",
     "@uniia/ui": "*",
-    "next": "^15.1.6",
+    "next": "^15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@uniia/eslint-config": "*",
-    "@uniia/typescript-config": "*",
     "@types/node": "^22",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
+    "@uniia/eslint-config": "*",
+    "@uniia/typescript-config": "*",
     "eslint": "^9.20.0",
     "typescript": "5.7.3"
   }

@@ -1,5 +1,5 @@
 import Image, {type ImageProps} from "next/image";
-import {Button} from "@uniia/ui/components/Button/Button";
+import {Button} from "@uniia/ui/components/base/Button/Button";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
