@@ -1,0 +1,140 @@
+name: Збірка та розгортання релізу
+
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_NAME: uniia-landing
+  REGISTRY: ghcr.io
+  IMAGE_TAG: ${{ github.event.release.tag_name }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set environment variables
+        id: set-env
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          IS_PRERELEASE=${{ github.event.release.prerelease }}
+          IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
+          
+          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" ]]; then
+            echo "ENVIRONMENT=test" >> $GITHUB_ENV
+            echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "ENV_TAG=latest" >> $GITHUB_ENV
+          fi
+          
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+          echo "Environment: ${{ env.ENVIRONMENT }}, Image tag: ${{ env.ENV_TAG }}"
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ env.IMAGE_TAG }}
+            type=raw,value=latest,enable=${{ !contains(github.event.release.tag_name, '-rc') && !github.event.release.prerelease }}
+            type=raw,value=latest-rc,enable=${{ contains(github.event.release.tag_name, '-rc') || github.event.release.prerelease }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/landing/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary of release
+        run: |
+          echo "Реліз: ${{ env.RELEASE_TAG }}"
+          echo "Середовище розгортання: ${{ env.ENVIRONMENT }}"
+          echo "Тег образу для середовища: ${{ env.ENV_TAG }}"
+
+  update-fleet-config:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set environment variables
+        id: set-env
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          IS_PRERELEASE=${{ github.event.release.prerelease }}
+          IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
+          
+          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" ]]; then
+            echo "ENVIRONMENT=test" >> $GITHUB_ENV
+            echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "ENV_TAG=latest" >> $GITHUB_ENV
+          fi
+          
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+      
+      - name: Create branch for changes
+        run: |
+          BRANCH_NAME="fleet-update-${{ env.RELEASE_TAG }}"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout -b $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+      
+      - name: Update Fleet configuration
+        run: |
+          # Оновлюємо тег образу в конфігурації Fleet для відповідного середовища
+          sed -i "s/newTag: .*$/newTag: ${{ env.RELEASE_TAG }}/" apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          
+          # Зберігаємо зміни
+          git add apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          git commit -m "Оновлено Fleet конфігурацію для релізу ${{ env.RELEASE_TAG }}"
+          git push origin ${{ env.BRANCH_NAME }}
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: ${{ env.BRANCH_NAME }}
+          delete-branch: true
+          title: "Оновлення Fleet конфігурації для релізу ${{ env.RELEASE_TAG }}"
+          body: |
+            Автоматичне оновлення Fleet конфігурації для розгортання версії ${{ env.RELEASE_TAG }}.
+            
+            **Середовище:** ${{ env.ENVIRONMENT }}
+            **Тег образу:** ${{ env.RELEASE_TAG }}
+            
+            Цей PR було створено автоматично через GitHub Actions після публікації релізу. 

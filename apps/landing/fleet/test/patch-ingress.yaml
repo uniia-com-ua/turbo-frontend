@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: uniia-landing
+spec:
+  rules:
+  - host: test.app.uniia.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: uniia-landing
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - test.app.uniia.io
+    secretName: uniia-test-tls-cert 

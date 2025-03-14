@@ -1,0 +1,15 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: uniia-landing
+  namespace: fleet-default
+spec:
+  # Репозиторій, який буде відслідковуватись Fleet
+  repo: https://github.com/YOUR_ORG/turbo-frontend
+  # Гілка, яку буде відслідковувати Fleet
+  branch: main
+  # Шлях до директорії з Fleet конфігурацією в репозиторії
+  paths:
+  - apps/landing/fleet
+  # Інтервал синхронізації (за замовчуванням 15m)
+  pollingInterval: 1m 
