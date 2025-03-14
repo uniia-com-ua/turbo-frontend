@@ -14,31 +14,9 @@ RUN npm install -g turbo
 # Важливо: цей Dockerfile треба запускати з кореня монорепозиторію: 
 # docker build -f apps/landing/Dockerfile .
 COPY . .
-RUN npx turbo prune uniia-landing --docker
 
-# Add lockfile and package.json's of isolated subworkspace
-FROM base AS installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-# First install the dependencies (as they change less often)
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/package-lock.json ./package-lock.json
-RUN npm ci
-
-# Build the project
-COPY --from=builder /app/out/full/ .
-
-# Uncomment and use build args to enable remote caching
-# ARG TURBO_TEAM
-# ENV TURBO_TEAM=$TURBO_TEAM
-
-# ARG TURBO_TOKEN
-# ENV TURBO_TOKEN=$TURBO_TOKEN
-
-# Компіляція TypeScript і збірка проекту
-RUN npm run build --workspace=uniia-landing
+# Використовуємо turbo для збірки, що включає і залежності
+RUN npx turbo build --filter=uniia-landing...
 
 FROM base AS runner
 WORKDIR /app
@@ -51,14 +29,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/.next/static ./apps/landing/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/public ./apps/landing/public
+# Копіюємо необхідні файли для запуску
+COPY --from=builder --chown=nextjs:nodejs /app/apps/landing/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/landing/.next/static ./apps/landing/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/landing/public ./apps/landing/public
 
 # Створення символічного посилання для package.json (потрібно для ES модулів)
-COPY --from=installer --chown=nextjs:nodejs /app/apps/landing/package.json ./apps/landing/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/landing/package.json ./apps/landing/
 
 # Відкриття порту
 EXPOSE 3000
