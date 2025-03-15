@@ -115,8 +115,25 @@ jobs:
       
       - name: Update Fleet configuration
         run: |
+          # Переконуємося, що директорія існує
+          if [ ! -d "apps/landing/fleet/${{ env.ENVIRONMENT }}" ]; then
+            echo "Помилка: Директорія ${{ env.ENVIRONMENT }} не існує!"
+            exit 1
+          fi
+          
+          # Перевіряємо існування файлу kustomization.yaml
+          if [ ! -f "apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml" ]; then
+            echo "Помилка: Файл kustomization.yaml не знайдено в директорії ${{ env.ENVIRONMENT }}!"
+            exit 1
+          fi
+          
           # Оновлюємо тег образу в конфігурації Fleet для відповідного середовища
+          # Використовуємо конкретний тег релізу замість latest/latest-rc
           sed -i "s/newTag: .*$/newTag: ${{ env.RELEASE_TAG }}/" apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          
+          # Виводимо зміни для логування
+          echo "Оновлено kustomization.yaml в директорії ${{ env.ENVIRONMENT }}:"
+          cat apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
           
           # Зберігаємо зміни
           git add apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
@@ -129,7 +146,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
           branch: ${{ env.BRANCH_NAME }}
-          delete-branch: true
+          delete-branch: false
           title: "Оновлення Fleet конфігурації для релізу ${{ env.RELEASE_TAG }}"
           body: |
             Автоматичне оновлення Fleet конфігурації для розгортання версії ${{ env.RELEASE_TAG }}.
