@@ -14,6 +14,13 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      app_name: ${{ steps.set-outputs.outputs.app_name }}
+      app_path: ${{ steps.set-outputs.outputs.app_path }}
+      version: ${{ steps.set-outputs.outputs.version }}
+      environment: ${{ steps.set-outputs.outputs.environment }}
+      env_tag: ${{ steps.set-outputs.outputs.env_tag }}
+      release_tag: ${{ steps.set-outputs.outputs.release_tag }}
     
     steps:
       - name: Checkout repository
@@ -35,6 +42,10 @@ jobs:
           TAG=${{ github.event.release.tag_name }}
           IS_PRERELEASE=${{ github.event.release.prerelease }}
           IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
+          
+          echo "Тег релізу: $TAG"
+          echo "IS_PRERELEASE: $IS_PRERELEASE"
+          echo "IS_RC: $IS_RC"
           
           # Визначаємо застосунок за префіксом
           if [[ "$TAG" == landing-* ]]; then
@@ -59,26 +70,63 @@ jobs:
             echo "УВАГА: Не знайдено префікс застосунку в тегу $TAG. Використовуємо landing за замовчуванням."
           fi
           
+          echo "Визначені значення: APP_NAME=$APP_NAME, APP_PATH=$APP_PATH, VERSION=$VERSION"
+          
           # Налаштовуємо змінні середовища
           if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" || "$VERSION" == *"-rc"* ]]; then
-            echo "ENVIRONMENT=test" >> $GITHUB_ENV
-            echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
+            echo "Визначено тестове середовище (test) на основі версії $VERSION"
+            ENVIRONMENT="test"
+            ENV_TAG="latest-rc"
           else
-            echo "ENVIRONMENT=production" >> $GITHUB_ENV
-            echo "ENV_TAG=latest" >> $GITHUB_ENV
+            echo "Визначено продакшн середовище (production) на основі версії $VERSION"
+            ENVIRONMENT="production"
+            ENV_TAG="latest"
           fi
           
           # Зберігаємо визначені змінні
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "ENVIRONMENT=$ENVIRONMENT" >> $GITHUB_ENV
+          echo "ENV_TAG=$ENV_TAG" >> $GITHUB_ENV
           echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
           
+          # Виводимо проміжну інформацію
+          echo "---"
+          echo "Встановлені змінні середовища:"
           echo "Застосунок: $APP_NAME"
           echo "Шлях до застосунку: $APP_PATH"
           echo "Версія: $VERSION"
-          echo "Середовище: ${{ env.ENVIRONMENT }}"
-          echo "Тег образу: ${{ env.ENV_TAG }}"
+          echo "Середовище: $ENVIRONMENT"
+          echo "Тег образу: $ENV_TAG"
+          echo "---"
+
+      # Встановлюємо outputs для передачі в інші job
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "app_name=${{ env.APP_NAME }}" >> $GITHUB_OUTPUT
+          echo "app_path=${{ env.APP_PATH }}" >> $GITHUB_OUTPUT
+          echo "version=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+          echo "environment=${{ env.ENVIRONMENT }}" >> $GITHUB_OUTPUT
+          echo "env_tag=${{ env.ENV_TAG }}" >> $GITHUB_OUTPUT
+          echo "release_tag=${{ env.RELEASE_TAG }}" >> $GITHUB_OUTPUT
+
+      # Додаємо окремий крок для діагностики
+      - name: Debug Environment Variables
+        run: |
+          echo "Перевірка доступних змінних середовища після встановлення:"
+          echo "ENVIRONMENT: ${{ env.ENVIRONMENT }}"
+          echo "ENV_TAG: ${{ env.ENV_TAG }}"
+          echo "APP_NAME: ${{ env.APP_NAME }}"
+          echo "APP_PATH: ${{ env.APP_PATH }}"
+          echo "VERSION: ${{ env.VERSION }}"
+          
+          # Перевіряємо, чи встановлено важливі змінні
+          if [ -z "${{ env.ENVIRONMENT }}" ] || [ -z "${{ env.APP_NAME }}" ] || [ -z "${{ env.VERSION }}" ]; then
+            echo "ПОМИЛКА: Одна або більше необхідних змінних середовища не встановлено!"
+            exit 1
+          fi
 
       - name: Extract metadata for Docker
         id: meta
@@ -122,50 +170,28 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Determine app and set variables
-        id: determine-app
+      - name: Set environment variables from needs
         run: |
-          TAG=${{ github.event.release.tag_name }}
-          IS_PRERELEASE=${{ github.event.release.prerelease }}
-          IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
+          echo "APP_NAME=${{ needs.build-and-push.outputs.app_name }}" >> $GITHUB_ENV
+          echo "APP_PATH=${{ needs.build-and-push.outputs.app_path }}" >> $GITHUB_ENV
+          echo "VERSION=${{ needs.build-and-push.outputs.version }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ needs.build-and-push.outputs.environment }}" >> $GITHUB_ENV
+          echo "ENV_TAG=${{ needs.build-and-push.outputs.env_tag }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ needs.build-and-push.outputs.release_tag }}" >> $GITHUB_ENV
           
-          # Визначаємо застосунок за префіксом
-          if [[ "$TAG" == landing-* ]]; then
-            # Landing застосунок
-            APP_NAME="landing"
-            APP_PATH="apps/landing"
-            VERSION=$(echo $TAG | sed 's/landing-//')
-          # Додайте інші застосунки тут
-          # elif [[ "$TAG" == admin-* ]]; then
-          #   APP_NAME="admin"
-          #   APP_PATH="apps/admin"
-          #   VERSION=$(echo $TAG | sed 's/admin-//')
-          # elif [[ "$TAG" == api-* ]]; then
-          #   APP_NAME="api"
-          #   APP_PATH="apps/api"
-          #   VERSION=$(echo $TAG | sed 's/api-//')
-          else
-            # Якщо префікс не знайдено, використовуємо старий формат (тільки для landing)
-            APP_NAME="landing"
-            APP_PATH="apps/landing"
-            VERSION=$TAG
-            echo "УВАГА: Не знайдено префікс застосунку в тегу $TAG. Використовуємо landing за замовчуванням."
+          echo "Змінні середовища встановлені з outputs першого job:"
+          echo "APP_NAME: ${{ env.APP_NAME }}"
+          echo "APP_PATH: ${{ env.APP_PATH }}"
+          echo "VERSION: ${{ env.VERSION }}"
+          echo "ENVIRONMENT: ${{ env.ENVIRONMENT }}"
+          echo "ENV_TAG: ${{ env.ENV_TAG }}"
+          echo "RELEASE_TAG: ${{ env.RELEASE_TAG }}"
+          
+          # Перевіряємо, чи встановлено важливі змінні
+          if [ -z "${{ env.ENVIRONMENT }}" ] || [ -z "${{ env.APP_NAME }}" ] || [ -z "${{ env.VERSION }}" ]; then
+            echo "ПОМИЛКА: Одна або більше необхідних змінних середовища не встановлено з outputs!"
+            exit 1
           fi
-          
-          # Налаштовуємо змінні середовища
-          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" || "$VERSION" == *"-rc"* ]]; then
-            echo "ENVIRONMENT=test" >> $GITHUB_ENV
-            echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
-          else
-            echo "ENVIRONMENT=production" >> $GITHUB_ENV
-            echo "ENV_TAG=latest" >> $GITHUB_ENV
-          fi
-          
-          # Зберігаємо визначені змінні
-          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
-          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
       
       - name: Create branch for changes
         run: |
@@ -216,21 +242,30 @@ jobs:
           # Зберігаємо зміни
           git add ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
           git commit -m "Оновлено Fleet конфігурацію для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
-          git push origin ${{ env.BRANCH_NAME }}
+      
+      - name: Push changes
+        run: |
+          git push -u origin ${{ env.BRANCH_NAME }}
       
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        id: create-pr
+        uses: actions/github-script@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: ${{ env.BRANCH_NAME }}
-          delete-branch: false
-          title: "Оновлення Fleet конфігурації для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
-          body: |
-            Автоматичне оновлення Fleet конфігурації для розгортання ${{ env.APP_NAME }} версії ${{ env.VERSION }}.
-            
-            **Застосунок:** ${{ env.APP_NAME }}
-            **Середовище:** ${{ env.ENVIRONMENT }}
-            **Тег образу:** ${{ env.VERSION }}
-            
-            Цей PR було створено автоматично через GitHub Actions після публікації релізу. 
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo, owner } = context.repo;
+            const result = await github.rest.pulls.create({
+              title: `Оновлення Fleet конфігурації для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}`,
+              owner,
+              repo,
+              head: '${{ env.BRANCH_NAME }}',
+              base: 'main',
+              body: `Автоматичне оновлення Fleet конфігурації для розгортання ${{ env.APP_NAME }} версії ${{ env.VERSION }}.
+              
+              **Застосунок:** ${{ env.APP_NAME }}
+              **Середовище:** ${{ env.ENVIRONMENT }}
+              **Тег образу:** ${{ env.VERSION }}
+              
+              Цей PR було створено автоматично через GitHub Actions після публікації релізу.`
+            });
+            console.log(`Pull Request створений: ${result.data.html_url}`); 
