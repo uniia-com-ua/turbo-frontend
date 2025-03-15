@@ -279,32 +279,18 @@ jobs:
       
       - name: Create Pull Request
         id: create-pr
-        uses: actions/github-script@v6
+        uses: peter-evans/create-pull-request@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            try {
-              const { repo, owner } = context.repo;
-              const result = await github.rest.pulls.create({
-                title: `Оновлення Fleet конфігурації для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}`,
-                owner,
-                repo,
-                head: '${{ env.BRANCH_NAME }}',
-                base: 'main',
-                body: `Автоматичне оновлення Fleet конфігурації для розгортання ${{ env.APP_NAME }} версії ${{ env.VERSION }}.
-                
-                **Застосунок:** ${{ env.APP_NAME }}
-                **Середовище:** ${{ env.ENVIRONMENT }}
-                **Тег образу:** ${{ env.VERSION }}
-                
-                Цей PR було створено автоматично через GitHub Actions після публікації релізу.`
-              });
-              console.log(`Pull Request створений: ${result.data.html_url}`);
-            } catch (error) {
-              console.log(`Помилка створення Pull Request: ${error.message}`);
-              if (error.message.includes('A pull request already exists')) {
-                console.log('PR вже існує для цієї гілки.');
-              } else {
-                return core.setFailed(`Помилка створення PR: ${error.message}`);
-              }
-            } 
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Оновлено Fleet конфігурацію для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
+          title: "Оновлення Fleet конфігурації для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
+          body: |
+            Автоматичне оновлення Fleet конфігурації для розгортання ${{ env.APP_NAME }} версії ${{ env.VERSION }}.
+            
+            **Застосунок:** ${{ env.APP_NAME }}
+            **Середовище:** ${{ env.ENVIRONMENT }}
+            **Тег образу:** ${{ env.VERSION }}
+            
+            Цей PR було створено автоматично через GitHub Actions після публікації релізу.
+          branch: ${{ env.BRANCH_NAME }}
+          base: main 
