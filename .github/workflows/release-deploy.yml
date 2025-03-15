@@ -189,13 +189,29 @@ jobs:
             exit 1
           fi
           
-          # Оновлюємо тег образу в конфігурації Fleet для відповідного середовища
-          # Використовуємо конкретну версію релізу
-          sed -i "s/newTag: .*$/newTag: ${{ env.VERSION }}/" ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
-          
-          # Виводимо зміни для логування
-          echo "Оновлено kustomization.yaml в директорії ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}:"
+          # Виводимо поточний стан файлу для логування
+          echo "Поточний стан kustomization.yaml:"
           cat ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          
+          # Оновлюємо тег образу в конфігурації Fleet для відповідного середовища
+          # Використовуємо версію релізу замість постійних тегів
+          NEW_TAG="${{ env.VERSION }}"
+          echo "Оновлюємо тег образу на: $NEW_TAG"
+          
+          # Використовуємо більш надійний спосіб заміни
+          # Шукаємо рядок з 'newTag:' і замінюємо все після нього на новий тег
+          sed -i '/newTag:/ s/newTag:.*$/newTag: '"$NEW_TAG"'/' ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          
+          # Виводимо оновлений стан для перевірки
+          echo "Оновлений kustomization.yaml:"
+          cat ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          
+          # Перевіряємо, чи відбулася зміна
+          if git diff --quiet ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml; then
+            echo "УВАГА: Зміни не були застосовані до файлу kustomization.yaml!"
+            echo "Це може бути через проблеми з форматом файлу або регулярним виразом sed."
+            exit 1
+          fi
           
           # Зберігаємо зміни
           git add ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
