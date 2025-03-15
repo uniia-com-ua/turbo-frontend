@@ -9,4 +9,4 @@ namespace: web-landing-prod
 
 images:
 - name: ghcr.io/uniia-com-ua/uniia-landing
-  newTag: 0.0.4
+  newTag: 0.0.1
