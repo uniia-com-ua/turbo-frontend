@@ -5,7 +5,6 @@ on:
     types: [published]
 
 env:
-  IMAGE_NAME: uniia-landing
   REGISTRY: ghcr.io
   IMAGE_TAG: ${{ github.event.release.tag_name }}
 
@@ -30,14 +29,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set environment variables
-        id: set-env
+      - name: Determine app and set variables
+        id: determine-app
         run: |
           TAG=${{ github.event.release.tag_name }}
           IS_PRERELEASE=${{ github.event.release.prerelease }}
           IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
           
-          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" ]]; then
+          # Визначаємо застосунок за префіксом
+          if [[ "$TAG" == landing-* ]]; then
+            # Landing застосунок
+            APP_NAME="landing"
+            APP_PATH="apps/landing"
+            VERSION=$(echo $TAG | sed 's/landing-//')
+          # Додайте інші застосунки тут
+          # elif [[ "$TAG" == admin-* ]]; then
+          #   APP_NAME="admin"
+          #   APP_PATH="apps/admin"
+          #   VERSION=$(echo $TAG | sed 's/admin-//')
+          # elif [[ "$TAG" == api-* ]]; then
+          #   APP_NAME="api"
+          #   APP_PATH="apps/api"
+          #   VERSION=$(echo $TAG | sed 's/api-//')
+          else
+            # Якщо префікс не знайдено, використовуємо старий формат (тільки для landing)
+            APP_NAME="landing"
+            APP_PATH="apps/landing"
+            VERSION=$TAG
+            echo "УВАГА: Не знайдено префікс застосунку в тегу $TAG. Використовуємо landing за замовчуванням."
+          fi
+          
+          # Налаштовуємо змінні середовища
+          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" || "$VERSION" == *"-rc"* ]]; then
             echo "ENVIRONMENT=test" >> $GITHUB_ENV
             echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
           else
@@ -45,24 +68,33 @@ jobs:
             echo "ENV_TAG=latest" >> $GITHUB_ENV
           fi
           
+          # Зберігаємо визначені змінні
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
-          echo "Environment: ${{ env.ENVIRONMENT }}, Image tag: ${{ env.ENV_TAG }}"
+          
+          echo "Застосунок: $APP_NAME"
+          echo "Шлях до застосунку: $APP_PATH"
+          echo "Версія: $VERSION"
+          echo "Середовище: ${{ env.ENVIRONMENT }}"
+          echo "Тег образу: ${{ env.ENV_TAG }}"
 
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/uniia-${{ env.APP_NAME }}
           tags: |
-            type=semver,pattern={{version}},value=${{ env.IMAGE_TAG }}
-            type=raw,value=latest,enable=${{ !contains(github.event.release.tag_name, '-rc') && !github.event.release.prerelease }}
-            type=raw,value=latest-rc,enable=${{ contains(github.event.release.tag_name, '-rc') || github.event.release.prerelease }}
+            type=raw,value=${{ env.VERSION }}
+            type=raw,value=latest,enable=${{ !contains(env.VERSION, '-rc') && !github.event.release.prerelease }}
+            type=raw,value=latest-rc,enable=${{ contains(env.VERSION, '-rc') || github.event.release.prerelease }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./apps/landing/Dockerfile
+          file: ./${{ env.APP_PATH }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -71,9 +103,11 @@ jobs:
 
       - name: Summary of release
         run: |
+          echo "Застосунок: ${{ env.APP_NAME }}"
           echo "Реліз: ${{ env.RELEASE_TAG }}"
+          echo "Версія: ${{ env.VERSION }}"
           echo "Середовище розгортання: ${{ env.ENVIRONMENT }}"
-          echo "Тег образу для середовища: ${{ env.ENV_TAG }}"
+          echo "Тег образу: ${{ env.ENV_TAG }}"
 
   update-fleet-config:
     needs: build-and-push
@@ -88,14 +122,38 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Set environment variables
-        id: set-env
+      - name: Determine app and set variables
+        id: determine-app
         run: |
           TAG=${{ github.event.release.tag_name }}
           IS_PRERELEASE=${{ github.event.release.prerelease }}
           IS_RC=${{ contains(github.event.release.tag_name, '-rc') }}
           
-          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" ]]; then
+          # Визначаємо застосунок за префіксом
+          if [[ "$TAG" == landing-* ]]; then
+            # Landing застосунок
+            APP_NAME="landing"
+            APP_PATH="apps/landing"
+            VERSION=$(echo $TAG | sed 's/landing-//')
+          # Додайте інші застосунки тут
+          # elif [[ "$TAG" == admin-* ]]; then
+          #   APP_NAME="admin"
+          #   APP_PATH="apps/admin"
+          #   VERSION=$(echo $TAG | sed 's/admin-//')
+          # elif [[ "$TAG" == api-* ]]; then
+          #   APP_NAME="api"
+          #   APP_PATH="apps/api"
+          #   VERSION=$(echo $TAG | sed 's/api-//')
+          else
+            # Якщо префікс не знайдено, використовуємо старий формат (тільки для landing)
+            APP_NAME="landing"
+            APP_PATH="apps/landing"
+            VERSION=$TAG
+            echo "УВАГА: Не знайдено префікс застосунку в тегу $TAG. Використовуємо landing за замовчуванням."
+          fi
+          
+          # Налаштовуємо змінні середовища
+          if [[ "$IS_PRERELEASE" == "true" || "$IS_RC" == "true" || "$VERSION" == *"-rc"* ]]; then
             echo "ENVIRONMENT=test" >> $GITHUB_ENV
             echo "ENV_TAG=latest-rc" >> $GITHUB_ENV
           else
@@ -103,11 +161,15 @@ jobs:
             echo "ENV_TAG=latest" >> $GITHUB_ENV
           fi
           
+          # Зберігаємо визначені змінні
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
       
       - name: Create branch for changes
         run: |
-          BRANCH_NAME="fleet-update-${{ env.RELEASE_TAG }}"
+          BRANCH_NAME="fleet-update-${{ env.APP_NAME }}-${{ env.VERSION }}"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b $BRANCH_NAME
@@ -116,28 +178,28 @@ jobs:
       - name: Update Fleet configuration
         run: |
           # Переконуємося, що директорія існує
-          if [ ! -d "apps/landing/fleet/${{ env.ENVIRONMENT }}" ]; then
-            echo "Помилка: Директорія ${{ env.ENVIRONMENT }} не існує!"
+          if [ ! -d "${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}" ]; then
+            echo "Помилка: Директорія ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }} не існує!"
             exit 1
           fi
           
           # Перевіряємо існування файлу kustomization.yaml
-          if [ ! -f "apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml" ]; then
-            echo "Помилка: Файл kustomization.yaml не знайдено в директорії ${{ env.ENVIRONMENT }}!"
+          if [ ! -f "${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml" ]; then
+            echo "Помилка: Файл kustomization.yaml не знайдено в директорії ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}!"
             exit 1
           fi
           
           # Оновлюємо тег образу в конфігурації Fleet для відповідного середовища
-          # Використовуємо конкретний тег релізу замість latest/latest-rc
-          sed -i "s/newTag: .*$/newTag: ${{ env.RELEASE_TAG }}/" apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          # Використовуємо конкретну версію релізу
+          sed -i "s/newTag: .*$/newTag: ${{ env.VERSION }}/" ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
           
           # Виводимо зміни для логування
-          echo "Оновлено kustomization.yaml в директорії ${{ env.ENVIRONMENT }}:"
-          cat apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          echo "Оновлено kustomization.yaml в директорії ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}:"
+          cat ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
           
           # Зберігаємо зміни
-          git add apps/landing/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
-          git commit -m "Оновлено Fleet конфігурацію для релізу ${{ env.RELEASE_TAG }}"
+          git add ${{ env.APP_PATH }}/fleet/${{ env.ENVIRONMENT }}/kustomization.yaml
+          git commit -m "Оновлено Fleet конфігурацію для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
           git push origin ${{ env.BRANCH_NAME }}
       
       - name: Create Pull Request
@@ -147,11 +209,12 @@ jobs:
           base: main
           branch: ${{ env.BRANCH_NAME }}
           delete-branch: false
-          title: "Оновлення Fleet конфігурації для релізу ${{ env.RELEASE_TAG }}"
+          title: "Оновлення Fleet конфігурації для ${{ env.APP_NAME }} до версії ${{ env.VERSION }}"
           body: |
-            Автоматичне оновлення Fleet конфігурації для розгортання версії ${{ env.RELEASE_TAG }}.
+            Автоматичне оновлення Fleet конфігурації для розгортання ${{ env.APP_NAME }} версії ${{ env.VERSION }}.
             
+            **Застосунок:** ${{ env.APP_NAME }}
             **Середовище:** ${{ env.ENVIRONMENT }}
-            **Тег образу:** ${{ env.RELEASE_TAG }}
+            **Тег образу:** ${{ env.VERSION }}
             
             Цей PR було створено автоматично через GitHub Actions після публікації релізу. 
