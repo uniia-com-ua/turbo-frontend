@@ -1,4 +1,4 @@
-import React, {lazy} from "react";
+import React from "react";
 import {
   AppBar as MuiAppBar,
   Toolbar,
@@ -12,10 +12,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import {styled, useTheme} from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
-import {spacing} from "@uniia/ui/theme/tokens/index.ts";
-import logo from "@uniia/ui/assets/logo/app_icon.png";
 
 // Стилізований компонент для логотипу
 const Logo = styled("div")({
@@ -35,12 +33,14 @@ export interface AppBarProps {
   onLanguageChange?: () => void;
   onStartClick?: () => void;
   isMobile?: boolean;
+  logoImage?: string;
 }
 
 export const AppBar: React.FC<AppBarProps> = ({
   onLanguageChange,
   onStartClick,
   isMobile = false,
+  logoImage = "../../../assets/landing/logo/logo.png",
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -72,7 +72,7 @@ export const AppBar: React.FC<AppBarProps> = ({
         <Toolbar disableGutters sx={{height: "100%"}}>
           {/* Логотип */}
           <Logo>
-            <img src={logo} width="44" height="44" alt="Унія лого" />
+            <img src={logoImage} width="44" height="44" alt="Унія лого" />
             <Typography variant="h6" component="div" fontWeight="bold">
               Унія
             </Typography>

@@ -1,6 +1,6 @@
-import React from "react";
-import {Box, Typography, Container, useMediaQuery} from "@mui/material";
-import {styled, useTheme} from "@mui/material/styles";
+import React, {useEffect} from "react";
+import {Box, Typography, Container} from "@mui/material";
+import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
 
 // Контейнер для банера з фоновим зображенням
@@ -97,6 +97,7 @@ export interface BannerProps {
   subtitle?: string;
   primaryButtonText?: string;
   secondaryButtonText?: string;
+  bannerImage?: string;
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
 }
@@ -106,25 +107,21 @@ export const Banner: React.FC<BannerProps> = ({
   subtitle = "Перша онлайн-платформа для студентів українських університетів",
   primaryButtonText = "Розпочати",
   secondaryButtonText = "Дізнатись більше",
+  bannerImage = "../../../assets/landing/banner.png",
   onPrimaryClick,
   onSecondaryClick,
 }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-  const backgroundImage = "../../../assets/landing/banner.png";
-
   // Попереднє завантаження зображення для кращої продуктивності
-  React.useEffect(() => {
+  useEffect(() => {
     const img = new Image();
-    img.src = backgroundImage;
-  }, [backgroundImage]);
+    img.src = bannerImage;
+  }, [bannerImage]);
 
   return (
     <Box sx={{width: "100%", position: "relative", overflow: "hidden"}}>
       <BannerContainer
         sx={{
-          backgroundImage: `url(${backgroundImage})`,
+          backgroundImage: `url(${bannerImage})`,
           width: "100%",
         }}>
         <Overlay />

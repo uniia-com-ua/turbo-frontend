@@ -1,5 +1,4 @@
 import {Button as MuiButton, ButtonProps as MuiButtonProps} from "@mui/material";
-import {border} from "@mui/system";
 import {roundness} from "@uniia/ui/theme/tokens/index.ts";
 
 export interface ButtonProps extends MuiButtonProps {
