@@ -22,7 +22,8 @@ const BannerContainer = styled(Box)(({theme}) => ({
   padding: 0,
   [theme.breakpoints.down("md")]: {
     minHeight: "400px",
-    height: "90vh",
+    height: "80vh",
+    backgroundPosition: "70%",
   },
 }));
 
@@ -107,7 +108,7 @@ export const Banner: React.FC<BannerProps> = ({
   subtitle = "Перша онлайн-платформа для студентів українських університетів",
   primaryButtonText = "Розпочати",
   secondaryButtonText = "Дізнатись більше",
-  bannerImage = "../../../assets/landing/banner.png",
+  bannerImage = "../../../assets/landing/main_image.webp",
   onPrimaryClick,
   onSecondaryClick,
 }) => {

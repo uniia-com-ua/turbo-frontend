@@ -22,15 +22,15 @@ const Footer = styled("footer")(({theme}) => ({
 }));
 
 export interface PageProps {
-  title?: string;
-  description?: string;
+  banner_title?: string;
+  banner_subtitle?: string;
   bannerImage?: string;
   logoImage?: string;
 }
 
 export const Page: React.FC<PageProps> = ({
-  title = "Карбуй освіту",
-  description = "Унія — інноваційна платформа для вивчення української мови та культури.",
+  banner_title = "Карбуй освіту",
+  banner_subtitle = "Унія — інноваційна платформа для вивчення української мови та культури.",
   bannerImage = "../../../assets/landing/banner.png",
   logoImage = "../../../assets/landing/logo/logo.png",
 }) => {
@@ -47,7 +47,7 @@ export const Page: React.FC<PageProps> = ({
       />
 
       <Container maxWidth="xl">
-        <Banner title={title} bannerImage={bannerImage} />
+        <Banner title={banner_title} subtitle={banner_subtitle} bannerImage={bannerImage} />
         <Box height={300}>
           <Typography
             color="gray"
@@ -57,7 +57,7 @@ export const Page: React.FC<PageProps> = ({
             textAlign={"center"}
             gutterBottom
             fontWeight="italic">
-            {description}
+            Розробка сторінки в процесі...
           </Typography>
         </Box>
 

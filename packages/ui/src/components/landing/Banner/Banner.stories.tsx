@@ -26,8 +26,7 @@ type Story = StoryObj<typeof Banner>;
  */
 export const Default: Story = {
   args: {
-    backgroundImage:
-      "https://lh5.googleusercontent.com/5qa12m5N0C7HPInX8wVRvKBXV_SSP8usDLzo84TqxWQ3Jv1PVYCo3xGRuaEg5iUDu97dh3KhcxKFKrvpqbFYfocr35GKGc7vw46GppHhdtgkRFa5eHw_uNjWEvEPDjqoYm4NJobS",
+    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Карбуй освіту",
     subtitle: "Перша онлайн-платформа для студентів українських університетів",
     primaryButtonText: "Розпочати",
@@ -40,8 +39,7 @@ export const Default: Story = {
  */
 export const Alternative: Story = {
   args: {
-    backgroundImage:
-      "https://lh5.googleusercontent.com/5qa12m5N0C7HPInX8wVRvKBXV_SSP8usDLzo84TqxWQ3Jv1PVYCo3xGRuaEg5iUDu97dh3KhcxKFKrvpqbFYfocr35GKGc7vw46GppHhdtgkRFa5eHw_uNjWEvEPDjqoYm4NJobS",
+    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Навчайся із задоволенням",
     subtitle: "Сучасні методики та інтерактивні матеріали для ефективного навчання",
     primaryButtonText: "Спробувати",
@@ -54,10 +52,11 @@ export const Alternative: Story = {
  */
 export const Mobile: Story = {
   args: {
-    backgroundImage:
-      "https://lh5.googleusercontent.com/5qa12m5N0C7HPInX8wVRvKBXV_SSP8usDLzo84TqxWQ3Jv1PVYCo3xGRuaEg5iUDu97dh3KhcxKFKrvpqbFYfocr35GKGc7vw46GppHhdtgkRFa5eHw_uNjWEvEPDjqoYm4NJobS",
+    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Карбуй освіту",
     subtitle: "Перша онлайн-платформа для студентів українських університетів",
+    primaryButtonText: "Розпочати",
+    secondaryButtonText: "Дізнатись більше",
   },
   parameters: {
     viewport: {

@@ -9,19 +9,19 @@ export const buttonComponents: Components = {
     styleOverrides: {
       root: {
         textTransform: "none",
-        padding: "8px 24px",
         fontWeight: 400,
         boxShadow: "none",
-        lineHeight: "18px",
+        lineHeight: "20px",
         fontSize: "13px",
         "&:hover": {
           boxShadow: "none",
         },
       },
       sizeSmall: {
-        padding: `${spacing.space_x1} ${spacing.space_x3}`,
+        padding: `${spacing.space_x2} ${spacing.space_x4}`,
       },
       sizeMedium: {
+        lineHeight: "24px",
         padding: `${spacing.space_x2} ${spacing.space_x5}`,
       },
       sizeLarge: {

@@ -13,6 +13,10 @@ export const paletteLight = {
     primary: "#000000",
     secondary: "#666666",
   },
+  action: {
+    disabled: "rgba(2, 11, 24, 0.4)",
+    disabledBackground: "rgba(2, 11, 24, 0.06)",
+  },
   background: {
     default: "#ffffff",
   },

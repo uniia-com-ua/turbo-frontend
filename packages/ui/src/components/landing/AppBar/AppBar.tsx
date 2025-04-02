@@ -14,12 +14,12 @@ import {
 } from "@mui/material";
 import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
+import {LogoText} from "@uniia/ui/components/base/LogoText/LogoText";
 
 // Стилізований компонент для логотипу
 const Logo = styled("div")({
   display: "flex",
   alignItems: "center",
-  gap: "8px",
 });
 
 // Іконка для мобільного меню (можна замінити на svg)
@@ -72,10 +72,7 @@ export const AppBar: React.FC<AppBarProps> = ({
         <Toolbar disableGutters sx={{height: "100%"}}>
           {/* Логотип */}
           <Logo>
-            <img src={logoImage} width="44" height="44" alt="Унія лого" />
-            <Typography variant="h6" component="div" fontWeight="bold">
-              Унія
-            </Typography>
+            <LogoText size={100} />
           </Logo>
 
           <Box sx={{display: "flex", justifyContent: "flex-start", ml: 4, flexGrow: 1}}>
