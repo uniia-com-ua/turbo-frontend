@@ -1,3 +1,11 @@
 {
-  "uniia": "Uniia"
+  "uniia": "Uniia",
+  "appBar": {
+    "about": "About project",
+    "team": "Team",
+    "blog": "Blog"
+  },
+  "button": {
+    "start": "Start"
+  }
 }
