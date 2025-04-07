@@ -15,6 +15,7 @@ import {
 import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
 import {LogoText} from "@uniia/ui/components/base/LogoText/LogoText";
+import {useTranslations} from "next-intl";
 
 // Стилізований компонент для логотипу
 const Logo = styled("div")({
@@ -52,6 +53,8 @@ export const AppBar: React.FC<AppBarProps> = ({
     setAnchorEl(null);
   };
 
+  const t = useTranslations("common");
+
   return (
     <MuiAppBar
       position="sticky"
@@ -79,13 +82,13 @@ export const AppBar: React.FC<AppBarProps> = ({
             {!isMobile && (
               <>
                 <Button variant="text" color="inherit" size="large" rounded={false}>
-                  Про проєкт
+                  {t("appBar.about")}
                 </Button>
                 <Button variant="text" color="inherit" size="large" rounded={false}>
-                  Команда
+                  {t("appBar.team")}
                 </Button>
                 <Button variant="text" color="inherit" size="large" rounded={false}>
-                  Журнал «Грамота»
+                  {t("appBar.blog")}
                 </Button>
               </>
             )}
@@ -110,9 +113,9 @@ export const AppBar: React.FC<AppBarProps> = ({
                   vertical: "bottom",
                   horizontal: "right",
                 }}>
-                <MenuItem onClick={handleMenuClose}>Про проєкт</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Команда</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Журнал «Грамота»</MenuItem>
+                <MenuItem onClick={handleMenuClose}>{t("appBar.about")}</MenuItem>
+                <MenuItem onClick={handleMenuClose}>{t("appBar.team")}</MenuItem>
+                <MenuItem onClick={handleMenuClose}>{t("appBar.blog")}</MenuItem>
                 <Divider />
                 <MenuItem onClick={onLanguageChange}>
                   <ListItemIcon>🌐</ListItemIcon>
@@ -124,7 +127,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                     handleMenuClose();
                   }}>
                   <ListItemIcon>🚀</ListItemIcon>
-                  <ListItemText>Розпочати</ListItemText>
+                  <ListItemText>{t("button.start")}</ListItemText>
                 </MenuItem>
               </Menu>
             </>
@@ -140,7 +143,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                 rounded={false}
                 size="large"
                 sx={{backgroundColor: "#020B18", ml: 2}}>
-                Розпочати
+                {t("button.start")}
               </Button>
             </Box>
           )}
