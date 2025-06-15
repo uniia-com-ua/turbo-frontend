@@ -9,4 +9,4 @@ namespace: web-landing-test
 
 images:
 - name: ghcr.io/uniia-com-ua/uniia-landing
-  newTag: 0.0.4-rc
+  newTag: 0.0.2-rc
