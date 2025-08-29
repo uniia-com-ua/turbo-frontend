@@ -3,7 +3,6 @@ import {Container, Box, Typography, useMediaQuery, useTheme} from "@mui/material
 import {styled} from "@mui/material/styles";
 import {AppBar} from "@uniia/ui/components/landing/AppBar/AppBar";
 import {Banner} from "@uniia/ui/components/landing/Banner/Banner";
-import {useTranslations} from "next-intl";
 
 const MainContainer = styled("div")({
   minHeight: "100vh",
@@ -23,7 +22,6 @@ const Footer = styled("footer")(({theme}) => ({
 }));
 
 export default function Page() {
-  const t = useTranslations("home");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -33,15 +31,10 @@ export default function Page() {
         isMobile={isMobile}
         onLanguageChange={() => console.log("Мову змінено")}
         onStartClick={() => console.log("Розпочати")}
-        logoImage="/logo/app_icon.png"
       />
 
       <Container maxWidth="xl">
-        <Banner
-          title={t("banner.title")}
-          subtitle={t("banner.description")}
-          bannerImage="/main_image.webp"
-        />
+        <Banner title="Карбуй освіту" subtitle="Перша онлайн-платформа для студентів українських університетів" bannerImage="/main_image.webp" />
         <Box height={300}>
           <Typography
             color="gray"

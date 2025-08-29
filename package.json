@@ -25,7 +25,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "next-intl": "^4.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }

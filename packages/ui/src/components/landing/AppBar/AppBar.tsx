@@ -2,7 +2,6 @@ import React from "react";
 import {
   AppBar as MuiAppBar,
   Toolbar,
-  Typography,
   Box,
   Container,
   IconButton,
@@ -15,7 +14,6 @@ import {
 import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
 import {LogoText} from "@uniia/ui/components/base/LogoText/LogoText";
-import {useTranslations} from "next-intl";
 
 // Стилізований компонент для логотипу
 const Logo = styled("div")({
@@ -34,14 +32,12 @@ export interface AppBarProps {
   onLanguageChange?: () => void;
   onStartClick?: () => void;
   isMobile?: boolean;
-  logoImage?: string;
 }
 
 export const AppBar: React.FC<AppBarProps> = ({
   onLanguageChange,
   onStartClick,
   isMobile = false,
-  logoImage = "../../../assets/landing/logo/logo.png",
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -53,7 +49,15 @@ export const AppBar: React.FC<AppBarProps> = ({
     setAnchorEl(null);
   };
 
-  const t = useTranslations("common");
+  const t = (key: string) => {
+    const map: Record<string, string> = {
+      "appBar.about": "Про проєкт",
+      "appBar.team": "Команда",
+      "appBar.blog": "Блог",
+      "button.start": "Розпочати",
+    };
+    return map[key] ?? key;
+  };
 
   return (
     <MuiAppBar
