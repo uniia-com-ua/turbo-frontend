@@ -1,2 +1,2 @@
 export * from "./AppBar";
-export * from "./Banner";
+export * from "./Banner"; // re-exports InfoBanner

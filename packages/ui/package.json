@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "exports": {
+    ".": "./src/index.ts",
     "./*": "./src/*.tsx",
     "./*.ts": "./src/*.ts",
     "./assets/*": "./src/assets/*"
@@ -31,6 +32,7 @@
     "@types/react-dom": "19.0.3",
     "@uniia/eslint-config": "*",
     "@uniia/typescript-config": "*",
+    "@uniia/strapi-sdk": "*",
     "chromatic": "^11.26.1",
     "eslint": "^9.20.0",
     "eslint-plugin-storybook": "^0.11.3",

@@ -10,7 +10,8 @@ const __dirname = dirname(__filename);
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, "../../")
+  outputFileTracingRoot: path.join(__dirname, "../../"),
+  transpilePackages: ["@uniia/ui", "@uniia/strapi-sdk"]
 };
 
 export default nextConfig;

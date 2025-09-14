@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   AppBar as MuiAppBar,
@@ -14,6 +16,7 @@ import {
 import {styled} from "@mui/material/styles";
 import {Button} from "@uniia/ui/components/base/Button/Button";
 import {LogoText} from "@uniia/ui/components/base/LogoText/LogoText";
+import type {Button as ButtonProps} from "@uniia/strapi-sdk";
 
 // Стилізований компонент для логотипу
 const Logo = styled("div")({
@@ -29,12 +32,16 @@ const MenuIcon = () => (
 );
 
 export interface AppBarProps {
+  Tabs?: ButtonProps[];
+  LoginButton?: ButtonProps;
   onLanguageChange?: () => void;
   onStartClick?: () => void;
   isMobile?: boolean;
 }
 
 export const AppBar: React.FC<AppBarProps> = ({
+  Tabs,
+  LoginButton,
   onLanguageChange,
   onStartClick,
   isMobile = false,
@@ -47,16 +54,6 @@ export const AppBar: React.FC<AppBarProps> = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const t = (key: string) => {
-    const map: Record<string, string> = {
-      "appBar.about": "Про проєкт",
-      "appBar.team": "Команда",
-      "appBar.blog": "Блог",
-      "button.start": "Розпочати",
-    };
-    return map[key] ?? key;
   };
 
   return (
@@ -85,15 +82,16 @@ export const AppBar: React.FC<AppBarProps> = ({
           <Box sx={{display: "flex", justifyContent: "flex-start", ml: 4, flexGrow: 1}}>
             {!isMobile && (
               <>
-                <Button variant="text" color="inherit" size="large" rounded={false}>
-                  {t("appBar.about")}
-                </Button>
-                <Button variant="text" color="inherit" size="large" rounded={false}>
-                  {t("appBar.team")}
-                </Button>
-                <Button variant="text" color="inherit" size="large" rounded={false}>
-                  {t("appBar.blog")}
-                </Button>
+                {Tabs?.map(tab => (
+                  <Button
+                    variant="text"
+                    color="inherit"
+                    size="large"
+                    rounded={tab.rounded}
+                    key={tab.id}>
+                    {tab.label}
+                  </Button>
+                ))}
               </>
             )}
           </Box>
@@ -117,9 +115,11 @@ export const AppBar: React.FC<AppBarProps> = ({
                   vertical: "bottom",
                   horizontal: "right",
                 }}>
-                <MenuItem onClick={handleMenuClose}>{t("appBar.about")}</MenuItem>
-                <MenuItem onClick={handleMenuClose}>{t("appBar.team")}</MenuItem>
-                <MenuItem onClick={handleMenuClose}>{t("appBar.blog")}</MenuItem>
+                {Tabs?.map(tab => (
+                  <MenuItem onClick={handleMenuClose} key={tab.id}>
+                    {tab.label}
+                  </MenuItem>
+                ))}
                 <Divider />
                 <MenuItem onClick={onLanguageChange}>
                   <ListItemIcon>🌐</ListItemIcon>
@@ -131,7 +131,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                     handleMenuClose();
                   }}>
                   <ListItemIcon>🚀</ListItemIcon>
-                  <ListItemText>{t("button.start")}</ListItemText>
+                  <ListItemText>{LoginButton?.label}</ListItemText>
                 </MenuItem>
               </Menu>
             </>
@@ -147,7 +147,7 @@ export const AppBar: React.FC<AppBarProps> = ({
                 rounded={false}
                 size="large"
                 sx={{backgroundColor: "#020B18", ml: 2}}>
-                {t("button.start")}
+                {LoginButton?.label}
               </Button>
             </Box>
           )}

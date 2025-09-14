@@ -1,0 +1,30 @@
+{
+  "name": "@uniia/strapi-sdk",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "sync-types": "node scripts/sync-types.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@uniia/eslint-config": "*",
+    "@uniia/typescript-config": "*",
+    "eslint": "^9.20.0",
+    "typescript": "5.7.3"
+  }
+}

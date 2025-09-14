@@ -1,6 +1,5 @@
 import type {Metadata} from "next";
 import "./globals.css";
-import {AppRouterCacheProvider} from "@mui/material-nextjs/v15-appRouter";
 import {eUkraine} from "./fonts";
 import {ThemeRegistry} from "./providers/ThemeRegistry";
 
@@ -17,9 +16,7 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${eUkraine.className}`}>
-        <AppRouterCacheProvider options={{key: "css"}}>
-          <ThemeRegistry>{children}</ThemeRegistry>
-        </AppRouterCacheProvider>
+        <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
   );

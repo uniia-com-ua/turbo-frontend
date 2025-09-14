@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from "@storybook/react";
-import {Banner} from "./Banner";
+import {InfoBanner} from "./Banner";
 
-const meta: Meta<typeof Banner> = {
-  title: "Landing/Banner",
-  component: Banner,
+const meta: Meta<typeof InfoBanner> = {
+  title: "Landing/InfoBanner",
+  component: InfoBanner,
   parameters: {
     layout: "centered",
     design: {
@@ -11,26 +11,24 @@ const meta: Meta<typeof Banner> = {
       url: "https://www.figma.com/design/VEafRJoDYtEnT09ZGlG3xM/Uniia-Design-System?node-id=744-1198&t=lCqi02o9K7c0YjHZ-4",
     },
   },
-  argTypes: {
-    onPrimaryClick: {action: "primaryClicked"},
-    onSecondaryClick: {action: "secondaryClicked"},
-  },
+  argTypes: {},
   tags: ["autodocs"],
 };
 
 export default meta;
-type Story = StoryObj<typeof Banner>;
+type Story = StoryObj<typeof InfoBanner>;
 
 /**
  * Стандартний банер з зображенням фону
  */
 export const Default: Story = {
   args: {
-    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Карбуй освіту",
     subtitle: "Перша онлайн-платформа для студентів українських університетів",
-    primaryButtonText: "Розпочати",
-    secondaryButtonText: "Дізнатись більше",
+    Buttons: [
+      {id: 1, label: "Розпочати", variant: "contained", size: "large"},
+      {id: 2, label: "Дізнатись більше", variant: "outlined", size: "large", isGlass: true},
+    ],
   },
 };
 
@@ -39,11 +37,12 @@ export const Default: Story = {
  */
 export const Alternative: Story = {
   args: {
-    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Навчайся із задоволенням",
     subtitle: "Сучасні методики та інтерактивні матеріали для ефективного навчання",
-    primaryButtonText: "Спробувати",
-    secondaryButtonText: "Дізнатись про нас",
+    Buttons: [
+      {id: 1, label: "Спробувати", variant: "contained", size: "large"},
+      {id: 2, label: "Дізнатись про нас", variant: "outlined", size: "large", isGlass: true},
+    ],
   },
 };
 
@@ -52,11 +51,12 @@ export const Alternative: Story = {
  */
 export const Mobile: Story = {
   args: {
-    bannerImage: "../../../assets/landing/main_image.webp",
     title: "Карбуй освіту",
     subtitle: "Перша онлайн-платформа для студентів українських університетів",
-    primaryButtonText: "Розпочати",
-    secondaryButtonText: "Дізнатись більше",
+    Buttons: [
+      {id: 1, label: "Розпочати", variant: "contained", size: "large"},
+      {id: 2, label: "Дізнатись більше", variant: "outlined", size: "large", isGlass: true},
+    ],
   },
   parameters: {
     viewport: {

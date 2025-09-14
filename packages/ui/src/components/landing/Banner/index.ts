@@ -1,2 +1,2 @@
-export * from "./Banner";
-export {default} from "./Banner";
+export * from "./Banner"; // тепер експортує InfoBanner
+export {default as InfoBanner} from "./Banner";
